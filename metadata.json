@@ -1,0 +1,7 @@
+{
+  "name": "MandiHunt Kerala",
+  "description": "The ultimate Gen Z discovery platform for the best Mandi spots in Kerala. Features AI-powered search, portion guides, and viral discovery tools.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
