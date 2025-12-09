@@ -23,6 +23,8 @@ router.get('/admin/stats', adminController.getStats);
 
 // Shop Management
 router.get('/admin/shops', adminController.getAllShops);
+router.post('/admin/shops', adminController.createShop); // New
+router.put('/admin/shops/:id', adminController.updateShop); // New
 router.delete('/admin/shops/:id', adminController.deleteShop);
 router.put('/admin/shops/:id/status', adminController.updateShopStatus);
 
