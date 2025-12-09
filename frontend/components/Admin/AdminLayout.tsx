@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Store, Users, Settings, LogOut, Shield, MessageSquare, Activity, FileText } from 'lucide-react';
+import { LayoutDashboard, Store, Users, Settings, LogOut, Shield, MessageSquare, FileText, Menu, X } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -23,21 +24,46 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white flex font-sans">
+    <div className="min-h-screen bg-black text-white flex font-sans overflow-hidden">
+       
+       {/* Mobile Header */}
+       <div className="md:hidden fixed top-0 w-full bg-zinc-900 border-b border-white/5 z-30 flex items-center justify-between p-4">
+          <div className="flex items-center gap-2 text-mandi-500 font-bold text-lg">
+             <Shield size={20} /> ADMIN
+          </div>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-white">
+             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+       </div>
+
+       {/* Sidebar Overlay for Mobile */}
+       {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/80 z-30 md:hidden backdrop-blur-sm"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
+       )}
+
        {/* Sidebar */}
-       <div className="w-64 bg-zinc-900 border-r border-white/5 flex flex-col fixed h-full z-20">
-          <div className="p-6 border-b border-white/5">
+       <div className={`
+          fixed md:static inset-y-0 left-0 w-64 bg-zinc-900 border-r border-white/5 flex flex-col z-40 transform transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
+       `}>
+          <div className="p-6 border-b border-white/5 hidden md:block">
              <div className="flex items-center gap-2 text-mandi-500 font-bold text-xl tracking-tight">
                 <Shield size={24} /> ADMIN
              </div>
              <div className="text-gray-500 text-xs mt-1">MandiHunt Management</div>
           </div>
 
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto mt-16 md:mt-0">
              {menuItems.map((item) => (
                 <button
                   key={item.path}
-                  onClick={() => navigate(item.path)}
+                  onClick={() => {
+                     navigate(item.path);
+                     setIsSidebarOpen(false);
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                      location.pathname === item.path || (item.path !== '/admin/dashboard' && location.pathname.startsWith(item.path))
                        ? 'bg-mandi-500/10 text-mandi-500 border border-mandi-500/20' 
@@ -66,7 +92,7 @@ const AdminLayout = () => {
        </div>
 
        {/* Main Content */}
-       <div className="flex-1 ml-64 bg-black min-h-screen">
+       <div className="flex-1 bg-black min-h-screen overflow-y-auto w-full pt-16 md:pt-0">
           <Outlet />
        </div>
     </div>
