@@ -64,6 +64,31 @@ exports.getAllShops = (req, res) => {
     res.status(200).json({ status: 'success', results: shops.length, data: shops });
 };
 
+exports.createShop = (req, res) => {
+    const newShop = {
+        id: Date.now().toString(),
+        name: req.body.name || "New Shop",
+        village: req.body.village || "Unknown",
+        rating: 0,
+        status: "Active",
+        verified: true,
+        ...req.body
+    };
+    shops.push(newShop);
+    res.status(201).json({ status: 'success', data: newShop });
+};
+
+exports.updateShop = (req, res) => {
+    const { id } = req.params;
+    const index = shops.findIndex(s => s.id === id);
+    if (index !== -1) {
+        shops[index] = { ...shops[index], ...req.body };
+        res.status(200).json({ status: 'success', data: shops[index] });
+    } else {
+        res.status(404).json({ status: 'fail', message: 'Shop not found' });
+    }
+};
+
 exports.deleteShop = (req, res) => {
     const { id } = req.params;
     shops = shops.filter(s => s.id !== id);
