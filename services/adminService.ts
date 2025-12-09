@@ -1,73 +1,122 @@
 
-const API_BASE_URL = "http://localhost:5000/api/v1";
+import { API_CONFIG } from "../config";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
-  const clientKey = "mandi_hunt_web_client_secret_key_123";
   return {
     'Content-Type': 'application/json',
-    'x-client-id': clientKey,
+    'x-client-id': API_CONFIG.PUBLIC_APP_ID,
     'Authorization': `Bearer ${token}`
   };
 };
 
+const handleResponse = async (response: Response) => {
+    if (!response.ok) {
+        throw new Error(`Request failed: ${response.statusText}`);
+    }
+    const json = await response.json();
+    return json.data;
+};
+
+// --- STATS ---
 export const fetchDashboardStats = async () => {
   try {
-      const response = await fetch(`${API_BASE_URL}/admin/stats`, {
-        headers: getAuthHeaders()
-      });
-      if (!response.ok) throw new Error('Failed');
-      return response.json();
+      const response = await fetch(`${API_CONFIG.BASE_URL}/admin/stats`, { headers: getAuthHeaders() });
+      return handleResponse(response);
   } catch (e) {
       console.warn("Using Mock Stats");
       return {
-          data: {
-              totalUsers: 12543,
-              totalShops: 432,
-              activeNow: 89,
-              searchesToday: 1540,
-              revenue: "₹0 (Free Tier)",
-              trafficData: [
-                  { name: 'Mon', searches: 4000 },
-                  { name: 'Tue', searches: 3000 },
-                  { name: 'Wed', searches: 2000 },
-                  { name: 'Thu', searches: 2780 },
-                  { name: 'Fri', searches: 6890 }, 
-                  { name: 'Sat', searches: 9390 },
-                  { name: 'Sun', searches: 8490 },
-              ]
-          }
+          totalUsers: 12543,
+          totalShops: 432,
+          activeNow: 89,
+          searchesToday: 1540,
+          revenue: "₹12,450",
+          systemHealth: "98.5%",
+          trafficData: []
       };
   }
 };
 
+// --- SHOPS ---
 export const fetchAllShops = async () => {
-  try {
-      const response = await fetch(`${API_BASE_URL}/admin/shops`, {
-        headers: getAuthHeaders()
-      });
-      if (!response.ok) throw new Error('Failed');
-      const json = await response.json();
-      return json.data;
-  } catch (e) {
-      return [
-        { id: '1', name: "Nahdi Kuzhimanthi", village: "Edappally", rating: 4.8, status: "Active" },
-        { id: '2', name: "Sufi Mandi", village: "Kozhikode", rating: 4.6, status: "Active" },
-        { id: '3', name: "Al Reem", village: "Kochi", rating: 4.5, status: "Active" }
-      ];
-  }
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/shops`, { headers: getAuthHeaders() });
+    return handleResponse(response);
+};
+
+export const createShop = async (shopData: any) => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/shops`, { 
+        method: 'POST', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify(shopData)
+    });
+    return handleResponse(response);
+};
+
+export const updateShop = async (id: string, shopData: any) => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/shops/${id}`, { 
+        method: 'PUT', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify(shopData)
+    });
+    return handleResponse(response);
 };
 
 export const deleteShop = async (id: string) => {
-  try {
-      const response = await fetch(`${API_BASE_URL}/admin/shops/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-      if (!response.ok) throw new Error('Failed');
-      return true;
-  } catch (e) {
-      console.log("Mock delete");
-      return true;
-  }
+    await fetch(`${API_CONFIG.BASE_URL}/admin/shops/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    return true;
+};
+
+export const updateShopStatus = async (id: string, status: string) => {
+    await fetch(`${API_CONFIG.BASE_URL}/admin/shops/${id}/status`, { 
+        method: 'PUT', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status })
+    });
+    return true;
+};
+
+// --- USERS ---
+export const fetchAllUsers = async () => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/users`, { headers: getAuthHeaders() });
+    return handleResponse(response);
+};
+
+export const updateUserStatus = async (id: string, status: string) => {
+    await fetch(`${API_CONFIG.BASE_URL}/admin/users/${id}/status`, { 
+        method: 'PUT', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status })
+    });
+    return true;
+};
+
+// --- REVIEWS ---
+export const fetchAllReviews = async () => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/reviews`, { headers: getAuthHeaders() });
+    return handleResponse(response);
+};
+
+export const deleteReview = async (id: string) => {
+    await fetch(`${API_CONFIG.BASE_URL}/admin/reviews/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    return true;
+};
+
+// --- SYSTEM ---
+export const fetchSystemLogs = async () => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/logs`, { headers: getAuthHeaders() });
+    return handleResponse(response);
+};
+
+export const fetchSettings = async () => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/settings`, { headers: getAuthHeaders() });
+    return handleResponse(response);
+};
+
+export const saveSettings = async (settings: any) => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/settings`, { 
+        method: 'POST', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify(settings)
+    });
+    return handleResponse(response);
 };
