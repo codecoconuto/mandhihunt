@@ -22,22 +22,22 @@ const ReviewManager = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
        <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Review Moderation</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Review Moderation</h1>
             <p className="text-gray-500 text-sm mt-1">Monitor and moderate user submitted reviews.</p>
           </div>
        </div>
 
        <div className="grid gap-4">
           {reviews.map((review) => (
-             <div key={review.id} className="bg-zinc-900 border border-white/5 p-6 rounded-2xl flex items-start gap-4">
-                <div className={`p-3 rounded-xl ${review.status === 'Flagged' ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-gray-400'}`}>
+             <div key={review.id} className="bg-zinc-900 border border-white/5 p-4 md:p-6 rounded-2xl flex flex-col md:flex-row items-start gap-4">
+                <div className={`p-3 rounded-xl hidden md:block ${review.status === 'Flagged' ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-gray-400'}`}>
                    {review.status === 'Flagged' ? <Flag size={20} /> : <Star size={20} />}
                 </div>
                 
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                    <div className="flex justify-between items-start mb-2">
                       <div>
                          <h3 className="text-white font-bold">{review.shopName}</h3>
@@ -53,16 +53,16 @@ const ReviewManager = () => {
                    </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto justify-end">
                    <button 
                      onClick={() => handleDelete(review.id)}
-                     className="p-2 hover:bg-red-500/20 text-gray-500 hover:text-red-400 rounded-lg transition-colors"
+                     className="p-2 bg-white/5 md:bg-transparent hover:bg-red-500/20 text-gray-500 hover:text-red-400 rounded-lg transition-colors flex-1 md:flex-none flex justify-center"
                      title="Delete Review"
                    >
                       <Trash2 size={18} />
                    </button>
                    {review.status !== 'Published' && (
-                      <button className="p-2 hover:bg-green-500/20 text-gray-500 hover:text-green-400 rounded-lg transition-colors" title="Approve">
+                      <button className="p-2 bg-white/5 md:bg-transparent hover:bg-green-500/20 text-gray-500 hover:text-green-400 rounded-lg transition-colors flex-1 md:flex-none flex justify-center" title="Approve">
                          <CheckCircle size={18} />
                       </button>
                    )}
