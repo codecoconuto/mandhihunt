@@ -43,6 +43,24 @@ export const fetchAllShops = async () => {
     return handleResponse(response);
 };
 
+export const createShop = async (shopData: any) => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/shops`, { 
+        method: 'POST', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify(shopData)
+    });
+    return handleResponse(response);
+};
+
+export const updateShop = async (id: string, shopData: any) => {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/admin/shops/${id}`, { 
+        method: 'PUT', 
+        headers: getAuthHeaders(),
+        body: JSON.stringify(shopData)
+    });
+    return handleResponse(response);
+};
+
 export const deleteShop = async (id: string) => {
     await fetch(`${API_CONFIG.BASE_URL}/admin/shops/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
     return true;
